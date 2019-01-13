@@ -4,89 +4,60 @@ import Geom.Point3D;
 
 public class Ghost {
 	
-	double rG;//radius
-	double speedG;
-
-	Point3D ghostLocation;
-	   path ghostpath ;
-
-	/**
-	 * Constractor
-	 */ 
+	private Point3D p;
+	private double speed;
+	private double radius;
 	
-	public Ghost(Point3D G , double S, double R) {
-		this.speedG  = S;
-		this.rG = R;
-		ghostpath = new path();
-		this.ghostLocation = G;
-
-		
+	
+	
+	public Ghost(Point3D point , double speed, double radius) {
+	
+		this.p = point;
+		this.speed = speed;
+		this.radius = radius;
 		
 	}
-	/**
-	 * Copy Constractor
-	 *
-	 */
-	public Ghost(Ghost G) {
-		this(G.ghostLocation,G.speedG,G.rG);
-		ghostpath=new path();
+
+
+	public double getRad() {
+		return radius;
 	}
 
-	/**
-	 * @return the r
-	 */
-	public double getredG() {
-		return rG;
-	}
-	/**
-	 * @return the packLocation
-	 */
-	public Point3D getG() {
-		return ghostLocation;
-	}
-	/**
-	 * @return the packmanpath
-	 */
-	public path getpathG() {
-		return ghostpath;
-	}
-	/**
-	 * @return the speed
-	 */
-	public double getSpeedG() {
-		return speedG;
-	}	
-	
-	/**
-	 * @param r the r to set
-	 */
-	public void setredG(double rG) {
-		this.rG = rG;
-	}
-	
-	/**
-	 * @param packLocation the packLocation to set
-	 */
-	public void setghostLocation(Point3D ghostLocation) {
-		this.ghostLocation = ghostLocation;
-	}
-	
-	/**
-	 * @param speed the speed to set
-	 */
-	public void setSpeedG(double speedG) {
-		this.speedG = speedG;
+
+	public void setRad(double radius) {
+		this.radius = radius;
 	}
 
-	
+
+	public Point3D getP() {
+		return p;
+	}
+
+
+
+	public void setPoint(Point3D point) {
+		this.p = point;
+	}
+
+
+
+	public double getSpeed() {
+		return speed;
+	}
+
+
+
+	public void setSpeed(double speed) {
+		this.speed = speed;
+	}
+
+
+
 	@Override
 	public String toString() {
-		return "Packman ["+ghostLocation.toString()+" Radius= "+rG+"speed=" + speedG + "]";
+		return "Ghost [point=" + p + ", speed=" + speed + "]";
 	}
-	
-	
-	
 
-
+	
+	
 }
-

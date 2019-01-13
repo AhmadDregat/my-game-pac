@@ -4,52 +4,55 @@ import Geom.Point3D;
 /**
  * This Class represents the Fruits of the Pacman Gam.
  * To remind him the fruits give us points in the official game
+ * @author Mimoun Shimon and Omer Paz
+ *
  */
 public class Fruit {
-	Point3D fruit;
-	int Weight ; 
-	/**
-	 * Constractor
-	 */
-	public Fruit(Point3D fruit,int Weight) {
-		this.fruit=fruit;
-		this.Weight=Weight;
-
+	
+	
+	public Point3D Furit;
+	private double Weight;
+/**
+ * Constractor
+ * @param p Receiv Point(x,y)
+ * @param Weight Receiv Weight
+ */
+	public Fruit(Point3D p, double Weight) {
+		
+		this.Furit = p;
+		this.Weight = Weight;
 	}
 	/**
 	 * Copy Constractor
-	 */
+	 * @param f Receiv new Fruit to Copy
+	 */ 
 	public Fruit(Fruit f) {
-		this(f.fruit,f.Weight);
+		this(f.Furit, f.Weight);
 	}
-	/**
-	 * @return the fruit
-	 */
-	public Point3D getfruit() {
-		return fruit;
-	}
-	/**
-	 * @param fruit the fruit to set
-	 */
-	public void setfruit(Point3D fruit) {
-		this.fruit = fruit;
-	}
-	/**
-	 * @return the weight
-	 */
-	public int getWeight() {
+
+/**
+ * Getter Method
+ * @return the Weight
+ */
+	public double getWeight() {
 		return Weight;
 	}
-	/**
-	 * @param weight the weight to set
-	 */
-	public void setWeight(int weight) {
-		Weight = weight;
+/**
+ * Geter Methode 
+ * @return the Point of Fruit 
+ */
+	public Point3D getFruit() {
+		return Furit;
 	}
+	public void setFruit(Point3D p) {
+		this.Furit = p;
+	}
+
 
 	@Override
 	public String toString() {
-		return "Fruit [fruit=" + fruit.toString() + ", Weight=" + Weight + "]";
+		return "Furit [FuritPoint=" + Furit.toString() + ", Weight=" + Weight + "]";
 	}
+
 
 }

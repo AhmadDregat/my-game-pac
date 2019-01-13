@@ -1,90 +1,124 @@
 package GIS;
-import Coords.Map;
-import Geom.Point3D;
-import GIS.Packman;
+
 import java.util.ArrayList;
 
+import Coords.map;
+import Geom.Point3D;
+/**
+ * This class represents the course of my Pacman according to the fruits present
+ */
+public class path{
 
-public class path 
-{
-	private ArrayList<Fruit>thepath;
-	Map the_map=new Map();
-	public double time_path;
-	ArrayList<Packman> test_t_path;
+	public double totalTimePath;
+	map theMap = new map();
+	
+	private ArrayList<Fruit> thepath;
+	private ArrayList<Packman> temp_path;
 
-	public path()
-	{
+/**
+ * Constractor 
+ */
+	public path() {
+		this.totalTimePath = 0;	
 		thepath = new ArrayList<>();
-		this.time_path=0;
-	}
 
-	/**
-	 * @return the time_path
-	 */
-	public double getTime_path() {
-		return time_path;
-	}
-
-	/**
-	 * @param time_path the time_path to set
-	 */
-	public void setTime_path(double time_path) {
-		this.time_path = time_path;
 	}
 	/**
-	 * @return the test
-	 */
-	public ArrayList<Packman> gettest_t_path() {
-		return test_t_path;
+	 * Getter Method
+	 * @return  a Total Time from my Path
+ 	 */
+	public double getTheTime() {
+		return this.totalTimePath;
 	}
 	/**
-	 * @return the the_path
-	 */
-	public ArrayList<Fruit> getCpath() {
+	 * Setter Method
+	 * @param total  Receiv a new time 
+ 	 */
+	public void setTheTotalTime(double total) {
+		this.totalTimePath = total;
+	}
+	/**
+	 * Getter Method
+	 * @return  a Path Under the form ArrayList of Packman from my Game 
+ 	 */
+	public ArrayList<Packman> GetmyTest(){
+		return this.temp_path;
+	}
+	/**
+	 * Getter Method
+	 * return return a Path of Packman ( return a List of Fruit depending on the route my PAC-Man will receive)
+ 	 */
+	public ArrayList<Fruit> getCPath() {
 		return this.thepath;
 	}
-
 	/**
-	 * @param the_path the the_path to set
+	 * Calculations the time between a Pac-Man and a Fruit
+	 * @param p The Pacman
+	 * @param f The fruit
+	 * @return The Time
 	 */
-	public void setpath1(ArrayList<Fruit> the_path) {
-		this.thepath = the_path;
-	}
-
-	public double Time2Points(Packman p , Fruit f) {
-		if (the_map.destpixels(p.getP(), f.getfruit()) < p.getred()) {
+	public double CalTime2Points(Packman p , Fruit f) {
+		if (theMap.distPixels(p.getPack(), f.getFruit()) < p.getrad()) {
+			
 			return 0;
-			}
+		}
 		else {	
-					return (the_map.destpixels(p.getP(), f.getfruit())-p.getred())/p.getSpeed();
+			return (theMap.distPixels(p.getPack(), f.getFruit())-p.getrad())/p.getSpeed();
 
 		}
 	}
-	public double CalPathTime(Packman packman) {
-		double cal = 0;
+	
+	/**
+	 * Calculate the total time of a Path
+	 * @param packman Receiv Packman (with path inside)
+	 * @return  The total Time of a Path
+	 */
+	public double PathTime(Packman packman) {
+		
 		double totalTime = 0;
-		Packman t = new Packman(packman);
-		for (int i = 0; i < packman.getpath().getCpath().size(); i++) {
-			cal =Time2Points(packman,packman.getpath().getCpath().get(i));
-			totalTime +=cal;
-			packman.setPackLocation(packman.getpath().getCpath().get(i).getfruit());
+		double cal = 0;
+		Packman temp = new Packman(packman);
+		for (int i = 0; i < packman.getPath().getCPath().size(); i++) {
+			cal = CalTime2Points(packman,packman.getPath().getCPath().get(i));
+			totalTime = totalTime+cal;
+			packman.setPackLocation(packman.getPath().getCPath().get(i).getFruit());
+
 		}
-		packman.getpath().setTime_path(totalTime);
-		packman.setPackLocation(t.getP());
+		packman.getPath().setTheTotalTime(totalTime);
+		packman.setPackLocation(temp.getPack());
 
 		return totalTime;
 	}
 
-	public Point3D nextpoint(Packman p,Fruit f ,double t ) {
-		double y=p.getP().y()/((p.getpath().getTime_path()))+0.05;
-		double x=p.getP().x()/((p.getpath().getTime_path()))+0.05;
-		double xt=p.getP().x()+x*(-p.getP().x()+f.getfruit().x());
-		double yt=p.getP().y()+y*(-p.getP().y()+f.getfruit().y());
-		Point3D ans=new Point3D(xt,yt);
-		return ans;
+	/**
+	 * Find the next waypoints of my PAC-Man Path
+	 * @param p1 Pacman on which I do my calculations
+	 * @param f1 Fruit on which I do my calculations
+	 * @param t The time
+	 * @return a new Point of my path 
+	 */
+	public Point3D NextPoint(Packman p1 , Fruit f1, double t) {
+		
+	double dt = p1.getPath().getTheTime(); // the time from (x1,y1) to (x2,y2) example: 300.
+	
+	double Vx = p1.getPack().x()/dt+0.05;
+	double Vy = p1.getPack().y()/dt+0.05;
+	
+	double xt = p1.getPack().x()+Vx*(f1.getFruit().x()-p1.getPack().x());
+	double yt= p1.getPack().y()+Vy*(f1.getFruit().y()-p1.getPack().y());
+	return new Point3D(xt,yt);
+	
 	}
+	
 
-
-
+	/**
+	 * Setter Method
+	 * @param p new ArrayList of Fruit
+	 */
+	public void setPath(ArrayList<Fruit> p) {
+		this.thepath = p;
+		
+	}
+	
 
 }

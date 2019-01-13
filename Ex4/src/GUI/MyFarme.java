@@ -1,6 +1,4 @@
 package GUI;
-
-
 import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Image;
@@ -25,228 +23,188 @@ import javax.swing.JOptionPane;
 import javax.swing.filechooser.FileNameExtensionFilter;
 
 import Algorithm.AlgoTest;
-import Coords.Map;
+import Coords.map;
 import Coords.MyCoords;
 import GIS.Fruit;
 import GIS.game;
 import GIS.Ghost;
 import GIS.Packman;
 import GIS.path;
-import GIS.player;
-import GIS.BOX;
+import GIS.Player;
+import Geom.Box;
 import Geom.Point3D;
 import Robot.Play;
+
 /**
- *This class manages the graphical interface of pacman game.
+ * This Class manages the graphical representation of the entire program.
  * the class is an implements of MouseListener is an extents of JFrame.
  * More: http://www.ntu.edu.sg/home/ehchua/programming/java/j4a_gui.html
  *
  */
-public class MyFarme extends JFrame implements MouseListener, KeyListener
+public class MyFarme extends JFrame implements MouseListener , KeyListener
 {
+	/**
+	 * 
+	 */
 	private static final long serialVersionUID = 1L;
 
-	/***********************Seting the game Characters**************/
-
-	public  ArrayList<Packman> Packman_arr = new ArrayList<>();
-	public  ArrayList<Fruit> Fruits_arr = new ArrayList<>();
-	public ArrayList<Ghost> Ghost_arr=new ArrayList<>();
-	public ArrayList<BOX> BOX_arr=new ArrayList<>();
-	private game mygame=new game(Packman_arr, Fruits_arr,Ghost_arr, BOX_arr);
-	public ArrayList<Packman>ArrayTemp=new ArrayList<>();
-	public Map theMap = new Map();
-	path  theclosepackman ;
-	public Play startgame  ;
-	private MyCoords coord =new MyCoords();
-	path TheCloserPackman;
-
-
-
+	private boolean click = false;
+	Image image;
+	public boolean game_player=false;
+	private double dir;
+	boolean solo_game=false;
+	private int isGamer=0;
 
 
 
 	/***********Set images******************/
 	public  Graphics dbg;
 	public BufferedImage myImage;
-	public BufferedImage pack;
-	public BufferedImage Fruit;
+	public BufferedImage packimage;
+	public BufferedImage Fruitimage;
 	public BufferedImage ghost;
+	public BufferedImage box;
 	public BufferedImage player;
-	public BufferedImage BOX;
+
 
 
 	double radius = 1;
 	int speed = 1;
+	/***********************Setting the game Characters**************/
+
+	public  ArrayList<Packman> Packman_arr = new ArrayList<>();
+	public  ArrayList<Fruit> Fruits_arr = new ArrayList<>();
+	public  ArrayList<Box> Boxs_arr = new ArrayList<>();
+	public  ArrayList<Ghost> Ghost_arr = new ArrayList<>();
+	private game myGame=new game(Packman_arr, Fruits_arr,Boxs_arr,Ghost_arr);
+	public ArrayList<Packman> ArrayTemp=new ArrayList<>();
+	public map theMap = new map();
+	path TheCloserPackman;
+	public Play startGame;
+	private MyCoords coord = new MyCoords();
 
 
-	public boolean game_player  = false;
-	private double dir;
-	public boolean click  = false;
-	Image image ;
-	private int isGamer=0;
-	public boolean Solo_game=false;
-
-	MenuBar menuBarOption = new MenuBar();//menu Bar in the interface 
+	MenuBar menuOption = new MenuBar();//menu Bar in the interface 
 
 
 
-	game temp_run = new  game(Packman_arr, Fruits_arr,Ghost_arr, BOX_arr);
+
+
+
+	game temp_run=new game(Packman_arr, Fruits_arr,Boxs_arr,Ghost_arr);
+
 	public MyFarme() 
 	{
 		initGUI();		
-		this.addMouseListener(this);
+		this.addMouseListener(this); 
 		this.addKeyListener(this);
 
-
 	}
-
 
 	private void initGUI() {
 
 
-		try {
-			myImage = ImageIO.read(new File((theMap.getDiractroymap())));
-		}
-		catch (IOException e) 
-		{
-			e.printStackTrace();
-		}	
-		try {	
-			pack = ImageIO.read(new File("Pictures&Icones/packman.png")); 
-		} 
-		catch (IOException e) 
-		{ 
-			e.printStackTrace();
-		}
-		try {	
-			Fruit = ImageIO.read(new File("Pictures&Icones/furti.png")); 
-		}
-		catch (IOException e)
-		{ 
-			e.printStackTrace();
-		}
-		try {
-			BOX = ImageIO.read(new File("Pictures&Icones/box.png"));
-		} catch (IOException e) 
-		{ 
-			e.printStackTrace();
-		}
-		try {	
-			ghost = ImageIO.read(new File("Pictures&Icones/ghost.png"));
-		}
-		catch (IOException e)
-		{
-			e.printStackTrace();	
-		}
-		try {
-			player = ImageIO.read(new File("Pictures&Icones/player.png"));
-		}
-		catch (IOException e) 
-		{ 
-			e.printStackTrace();
-		}
+		try {	myImage = ImageIO.read(new File(theMap.getMapDiractory())); } catch (IOException e) { e.printStackTrace();	}	
+		try {	packimage = ImageIO.read(new File("Pictures&Icones/packman.png")); } catch (IOException e) { e.printStackTrace();	}
+		try {	Fruitimage = ImageIO.read(new File("Pictures&Icones/fruit.png")); } catch (IOException e) { e.printStackTrace();	}
+		try {	box = ImageIO.read(new File("Pictures&Icones/box.png")); } catch (IOException e) { e.printStackTrace();	}
+		try {	ghost = ImageIO.read(new File("Pictures&Icones/ghost.png")); } catch (IOException e) { e.printStackTrace();	}
+		try {	player = ImageIO.read(new File("Pictures&Icones/player.png")); } catch (IOException e) { e.printStackTrace();	}
 
-		Menu theMenu = new Menu("File"); 
-		// Game insert \\
-		Menu Add_Insert =new Menu ("Insert");
+
+
+
+
+		Menu OptionMenu = new Menu("File"); 
 		Menu AddMenu = new Menu("Add"); 
+		Menu Add_import=new Menu ("Import");
 
 
 
-		menuBarOption.add(theMenu);
-		menuBarOption.add(AddMenu);
-		menuBarOption.add(Add_Insert);
+		menuOption.add(OptionMenu);
+		menuOption.add(AddMenu);
+		menuOption.add(Add_import);
 
 
-		// Game control 
-		MenuItem commandMan  = new MenuItem(" Manual");
-		MenuItem commandAuto = new MenuItem("Auto");
-		MenuItem restart_item = new MenuItem("Rest");	
-		MenuItem exit = new MenuItem("Exit");
-		MenuItem Player_item = new MenuItem("Player ");	
+		MenuItem runItem_Manual = new MenuItem("Run Manual");
+		MenuItem runItem_Auto= new MenuItem("Run Automatic");
+		MenuItem reload_item = new MenuItem("Reload");
+		MenuItem exit = new MenuItem("Exit");	
+		MenuItem Player_User_item = new MenuItem("Player Manual");	
 		MenuItem Csv_read = new MenuItem("Csv");
 
 
+		OptionMenu.add(runItem_Manual);
+		OptionMenu.add(runItem_Auto);
+		OptionMenu.add(reload_item);
+		OptionMenu.add(exit);
+
+		AddMenu.add(Player_User_item);
+		Add_import.add(Csv_read);
 
 
 
-
-		theMenu.add(commandMan);
-		theMenu.add(commandAuto);
-		theMenu.add(restart_item);
-		theMenu.add(exit);
-
-		AddMenu.add(Player_item);
-		Add_Insert.add(Csv_read);
+		this.setMenuBar(menuOption);
 
 
+		//Turn on the buttons
 
-		this.setMenuBar(menuBarOption);
-
-
-
-
-		/**
-		 * Turn on the buttons
-		 */
-
-		commandMan.addActionListener(new ActionListener() {
+		runItem_Manual.addActionListener(new ActionListener() {
 			@Override
 
 			public void actionPerformed(ActionEvent e) {
-				startgame.setIDs(208727354,205441884,313332736);
-				if (game_player==true)
-				{
 
-					if(mygame.player != null){
-						startgame.getBoard();
-						click = true;
+				startGame.setIDs(208727354, 205441884,313332736);
+				if (game_player==true) {
+					if(myGame.player != null) {
+
+						startGame.getBoard();
 						isGamer = 4;
-						startgame.start();
+						click = true;
+						startGame.start();
 
 						Thread thread = new Thread(){
-							ArrayList<String> board_data = startgame.getBoard();
+							ArrayList<String> board = startGame.getBoard();
 
 
 							public void run(){ 
 
 
-								while(startgame.isRuning()){ 
+								while(startGame.isRuning()){ 
 
-									try {
-										sleep(200);
-									} 
-									catch (InterruptedException e) 
-									{	
-										e.printStackTrace();	
-									}
+									try {sleep(200);} catch (InterruptedException e) {	e.printStackTrace();	}
 
-									startgame.rotate(dir);
-									board_data = startgame.getBoard();
-									String info = startgame.getStatistics();
+									startGame.rotate(dir);
+									board = startGame.getBoard();
+									String info = startGame.getStatistics();
 									System.out.println(info);
 
 
-									try {
-										mygame.makeGame(board_data);
-									} 
-									catch (IOException e1) 
-									{
-										e1.printStackTrace();
-									}
+									try {myGame.makeGame(board);} catch (IOException e1) {e1.printStackTrace();}
+
 									repaint();
+
 								}
 							}
 						};
 
 						thread.start();
+
 					}
+
 				}
 				else 
-					JOptionPane.showMessageDialog(null,"EROR: Choose Player to start te Game ");
+					JOptionPane.showMessageDialog(null,"EROR: Enter Player to launch te Game ");
+
 			}
 		});
-	commandAuto.addActionListener(new ActionListener() {
+
+
+
+
+
+
+		runItem_Auto.addActionListener(new ActionListener() {
 			@Override
 
 			public void actionPerformed(ActionEvent e) {
@@ -256,24 +214,24 @@ public class MyFarme extends JFrame implements MouseListener, KeyListener
 					JOptionPane.showMessageDialog(null,"The player will be written to a new random point close to a Fruit ");
 				}
 				
-				startgame.setIDs(208727354	, 205441884);
+				startGame.setIDs(208727354, 205441884,313332736);
 				click = false;
 
-				int ran = (int)(Math.random()*mygame.Fruits_arr.size());
+				int ran = (int)(Math.random()*myGame.fruits_arr.size());
 				
-				System.out.println(mygame.Fruits_arr.get(ran).getfruit().x());
-				Point3D temp_point_locat=theMap.pixel2coord(mygame.Fruits_arr.get(ran).getfruit().x(), mygame.Fruits_arr.get(ran).getfruit().y());
+				System.out.println(myGame.fruits_arr.get(ran).getFruit().x());
+				Point3D temp_point_locat=theMap.Pixel2coord(myGame.fruits_arr.get(ran).getFruit().x(), myGame.fruits_arr.get(ran).getFruit().y());
 					
-				startgame.setInitLocation(temp_point_locat.x(),temp_point_locat.y());
+				startGame.setInitLocation(temp_point_locat.x(),temp_point_locat.y());
 
-				if(mygame.player != null) {
-					startgame.getBoard();
+				if(myGame.player != null) {
+					startGame.getBoard();
 					isGamer = 4;
 
-					startgame.start();
+					startGame.start();
 
 					Thread thread = new Thread(){
-						ArrayList<String> board_data = startgame.getBoard();
+						ArrayList<String> board_data = startGame.getBoard();
 
 
 						public void run(){ 
@@ -281,23 +239,23 @@ public class MyFarme extends JFrame implements MouseListener, KeyListener
 
 
 
-							while(startgame.isRuning()){ 
+							while(startGame.isRuning()){ 
 
 								try {sleep(200);} catch (InterruptedException e) {e.printStackTrace();}
 
-								startgame.rotate(dir);
-								board_data = startgame.getBoard();
-								String info = startgame.getStatistics();
+								startGame.rotate(dir);
+								board_data = startGame.getBoard();
+								String info = startGame.getStatistics();
 								System.out.println(info);
 
 								try {	temp_run.makeGame(board_data);
-								Point3D covertedfromPixel2 = theMap.pixel2coord(mygame.player.get_player_Location().x(), mygame.player.get_player_Location().y());
-								Point3D covertedfromPixel3 = theMap.pixel2coord(temp_run.player.get_player_Location().x(), temp_run.player.get_player_Location().y());
+								Point3D covertedfromPixel2 = theMap.Pixel2coord(myGame.player.get_player().x(), myGame.player.get_player().y());
+								Point3D covertedfromPixel3 = theMap.Pixel2coord(temp_run.player.get_player().x(), temp_run.player.get_player().y());
 
 								AlgoTest algo = new AlgoTest(temp_run);
 
-								temp_run.player.set_player_Location(covertedfromPixel3);
-								mygame.player.set_player_Location(covertedfromPixel2);
+								temp_run.player.setPoint_player(covertedfromPixel3);
+								myGame.player.setPoint_player(covertedfromPixel2);
 
 
 
@@ -308,7 +266,7 @@ public class MyFarme extends JFrame implements MouseListener, KeyListener
 								} catch (IOException e) {	e.printStackTrace();	}
 
 
-								try {mygame.makeGame(board_data);} catch (IOException e1) {e1.printStackTrace();}
+								try {myGame.makeGame(board_data);} catch (IOException e1) {e1.printStackTrace();}
 								repaint();						
 							}
 						}
@@ -318,21 +276,23 @@ public class MyFarme extends JFrame implements MouseListener, KeyListener
 			}
 
 		});
+		
+		
+		
 
-
-		restart_item.addActionListener(new ActionListener() {
+		reload_item.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
+				solo_game=false;
 				radius = 1;
 				speed = 1;
+				new MenuBar();
+				new map();
 				Packman_arr = new ArrayList<>();
 				Fruits_arr = new ArrayList<>();
-				BOX_arr = new ArrayList<>();
+				Boxs_arr = new ArrayList<>();
 				Ghost_arr = new ArrayList<>();
-				mygame=new game(Packman_arr, Fruits_arr,Ghost_arr,BOX_arr);
-				new MenuBar();
-				new Map();
-				Solo_game=false;
+				myGame=new game(Packman_arr, Fruits_arr,Boxs_arr,Ghost_arr);
 				isGamer=0;
 				ArrayTemp=new ArrayList<>();
 				game_player=false;
@@ -341,7 +301,7 @@ public class MyFarme extends JFrame implements MouseListener, KeyListener
 			}
 		});
 
-	exit.addActionListener(new ActionListener() {
+		exit.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				dispose();
@@ -349,7 +309,7 @@ public class MyFarme extends JFrame implements MouseListener, KeyListener
 		});
 
 
-		Player_item.addActionListener  (new ActionListener() {
+		Player_User_item.addActionListener  (new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 
@@ -357,10 +317,6 @@ public class MyFarme extends JFrame implements MouseListener, KeyListener
 
 			}
 		});
-
-
-
-
 
 		Csv_read.addActionListener(new ActionListener() {
 			@Override
@@ -376,17 +332,17 @@ public class MyFarme extends JFrame implements MouseListener, KeyListener
 				if (returnValue == JFileChooser.APPROVE_OPTION) {
 					System.out.println(fileChooser.getSelectedFile().getPath())	;
 
-					startgame = new Play(fileChooser.getSelectedFile().getPath());
+					startGame = new Play(fileChooser.getSelectedFile().getPath());
 
 					try {
-						mygame = new game(startgame);
-						Solo_game=true;
+						myGame = new game(startGame);
+						solo_game=true;
 					} catch (IOException e2) {
 						// TODO Auto-generated catch block
 						e2.printStackTrace();
 					}
 					isGamer = 4;
-					mygame.setfile_dir(fileChooser.getSelectedFile().getPath());
+					myGame.setfile_directory(fileChooser.getSelectedFile().getPath());
 					repaint();
 
 				}
@@ -395,28 +351,21 @@ public class MyFarme extends JFrame implements MouseListener, KeyListener
 
 
 
-
-	
-	
 	}
-
-
 	public void update(Graphics g){
 
 		paint(g);
 	}
-
 	public void paint(Graphics g) {
 
 		if(dbg==null){
-			g.drawImage(myImage, 0, 0,getWidth(),getHeight(),null);
-			//image = createImage(5000,5000);
+			image = createImage(5000,5000);
 			dbg = image.getGraphics();
 
-		}		
-		dbg.drawImage(image, 8,50, getWidth()-17, getHeight()-60,null);
+		}
 
 
+		dbg.drawImage(myImage, 8,50, this.getWidth()-17, this.getHeight()-60,null);
 
 
 		double x1 = 0;
@@ -425,54 +374,61 @@ public class MyFarme extends JFrame implements MouseListener, KeyListener
 		double y2 = 0 ;
 
 
-		if (isGamer!=0&& mygame.Fruits_arr.size() > 0) {
-			// Updating location and coordinate of fruit
-			for (int i=0; i<mygame.Fruits_arr.size(); i++) 
-			{
-				x1=(int)(mygame.Fruits_arr.get(i).getfruit().x()*getWidth());
-				y1=(int)(mygame.Fruits_arr.get(i).getfruit().y()*getHeight());	
+		if (isGamer!=0) {
 
-				g.drawImage(Fruit, (int)x1, (int)y1,20, 20, null);
+			if(myGame.fruits_arr.size() > 0) {
+
+				for (int j=0; j<myGame.Box_arr.size(); j++) {
+
+					x1=(myGame.Box_arr.get(j).getP0().x()*getWidth());
+					y1=(myGame.Box_arr.get(j).getP0().y()*getHeight());
+					x2=(myGame.Box_arr.get(j).getP1().x()*getWidth());
+					y2=(myGame.Box_arr.get(j).getP1().y()*getHeight());	
+					double width = x2-x1;
+					double height = y2-y1;
+					dbg.drawImage(box, (int)x1,(int) y1,(int)width, (int)height, null);
+
+				}
+				for (int i=0; i<myGame.fruits_arr.size(); i++) 	{
+					x1=(int)(myGame.fruits_arr.get(i).getFruit().x()*getWidth());
+					y1=(int)(myGame.fruits_arr.get(i).getFruit().y()*getHeight());	
+
+					dbg.drawImage(Fruitimage, (int)x1, (int)y1,20, 20, null);
+				}
 
 			}
+
+			for (int j=0; j<myGame.Packmanarr.size(); j++) {
+
+				x1=(myGame.Packmanarr.get(j).getPack().x()*getWidth());
+				y1=(myGame.Packmanarr.get(j).getPack().y()*getHeight());	
+
+
+				dbg.drawImage(packimage, (int)x1,(int) y1,20, 20, null);
+
+			}
+
+			for (int j=0; j<myGame.ghostarr.size(); j++) {
+				x1=(myGame.ghostarr.get(j).getP().x()*getWidth());
+				y1=(myGame.ghostarr.get(j).getP().y()*getHeight());	
+
+				dbg.drawImage(ghost, (int)x1,(int) y1,20, 20, null);
+
+			}
+			// probleme Player icon 
+			if(myGame.player!=null){
+				x1=(myGame.player.get_player().x()*getWidth());
+				y1=(myGame.player.get_player().y()*getHeight());	
+
+				//dbg.drawImage(player,(int)x1,(int) y1,30, 30,null);
+				dbg.setColor(Color.cyan);
+				dbg.fillOval((int)x1,(int) y1, 10, 10);
+			}
 		}
-		// Updating location and coordinate of BOX //**The box  did not move
-		for (int j=0; j<mygame.BOX_arr.size(); j++) {
-			double height = (mygame.BOX_arr.get(j).getP1().y()*getHeight())-(mygame.BOX_arr.get(j).getP0().y()*getHeight());
-			double width = (mygame.BOX_arr.get(j).getP1().x()*getWidth())-(mygame.BOX_arr.get(j).getP0().x()*getWidth());
-			dbg.drawImage(BOX, (int)(mygame.BOX_arr.get(j).getP0().x()*getWidth()),(int) (mygame.BOX_arr.get(j).getP0().y()*getHeight()),(int)width, (int)height, null);
 
-		}
-		// Updating location and coordinate of Packman
-		for (int j=0; j<mygame.Packmanarr.size(); j++) {
-
-			x1=(mygame.Packmanarr.get(j).getP().x()*getWidth());
-			y1=(mygame.Packmanarr.get(j).getP().y()*getHeight());	
-
-			dbg.drawImage(pack, (int)x1,(int) y1,20, 20, null);
-
-		}	
-		// Updating location and coordinate of GHOST
-		for (int j=0; j<mygame.Ghostarr.size(); j++) {
-			x1=(mygame.Ghostarr.get(j).getG().x()*getWidth());
-			y1=(mygame.Ghostarr.get(j).getG().y()*getHeight());	
-
-			dbg.drawImage(ghost, (int)x1,(int) y1,20, 20, null);
-
-		}
-		// Updating location and coordinate of player 
-		if(mygame.player!=null){
-			x1=(mygame.player.get_player_Location().x()*getWidth());
-			y1=(mygame.player.get_player_Location().y()*getHeight());	
-
-			dbg.setColor(Color.cyan);
-			dbg.fillOval((int)x1,(int) y1, 10, 10);
-		}
 		g.drawImage(image, 0, 0, this);
+
 	}
-
-
-
 
 
 	@Override
@@ -481,25 +437,27 @@ public class MyFarme extends JFrame implements MouseListener, KeyListener
 		double x_temp=arg.getX();
 		x_temp=x_temp/getWidth();
 
-
 		double y_temp=arg.getY();
 		y_temp=y_temp/getHeight();
 		Point3D point_return=new Point3D(x_temp, y_temp, 0);
-		Point3D covertedfromPixel = theMap.pixel2coord(x_temp, y_temp);
+
+		Point3D covertedfromPixel = theMap.Pixel2coord(x_temp, y_temp);
+
 
 		if(click == true) {
-			Point3D playerConert = theMap.pixel2coord(mygame.player.get_player_Location().x(), mygame.player. get_player_Location().y());
+			Point3D playerConert = theMap.Pixel2coord(myGame.player.get_player().x(), myGame.player.get_player().y());
 			double finalnum = coord.myDir(covertedfromPixel,playerConert);
 			System.out.println(finalnum);
 
 
 			dir = finalnum;
-			startgame.rotate(dir);
+			startGame.rotate(dir);
 		}
+
 
 		if (isGamer==(1))
 		{	
-			mygame.Fruits_arr.add(new Fruit(point_return,1));
+			myGame.fruits_arr.add(new Fruit(point_return,1));
 
 			System.out.println("Fruit "+covertedfromPixel.toString());
 
@@ -507,33 +465,33 @@ public class MyFarme extends JFrame implements MouseListener, KeyListener
 
 		}else if (isGamer==(-1))
 		{
-			mygame.Packmanarr.add(new Packman(point_return, radius, speed));
+			myGame.Packmanarr.add(new Packman(point_return, radius, speed));
 			System.out.println("Packman "+covertedfromPixel.toString());
 
 			repaint();
 		}else if(isGamer==3)
 		{
-			mygame.Ghostarr.add(new Ghost(point_return, radius, speed));
+			myGame.ghostarr.add(new Ghost(point_return, radius, speed));
 			System.out.println("Ghost "+covertedfromPixel.toString());
 			repaint();
 		}else if(isGamer==2)
 		{
-			mygame.player=new player(point_return, speed,radius);
+			myGame.player=new Player(point_return, speed,radius);
 
 			System.out.println("Player "+covertedfromPixel.toString());
-			if(Solo_game==true)
-			{startgame.setInitLocation(covertedfromPixel.x(), covertedfromPixel.y());
+			if(solo_game==true)
+			{startGame.setInitLocation(covertedfromPixel.x(), covertedfromPixel.y());
 			game_player=true;
 			repaint();
 			}
 		}
-
 
 	}
 
 
 	@Override
 	public void mouseExited(MouseEvent arg0) {
+		// TODO Auto-generated method stub
 
 	}
 
@@ -544,40 +502,44 @@ public class MyFarme extends JFrame implements MouseListener, KeyListener
 
 	@Override
 	public void mouseReleased(MouseEvent arg0) {
+		// TODO Auto-generated method stub
 
 	}
 
 	@Override
 	public void mouseEntered(MouseEvent arg0) {
+		// TODO Auto-generated method stub
 
 	}
 
-
 	@Override
-	public void keyPressed(KeyEvent arg0) {
+	public void keyTyped(KeyEvent e) {
+		// TODO Auto-generated method stub
 
 	}
 
-
 	@Override
-	public void keyReleased(KeyEvent arg0) {
+	public void keyReleased(KeyEvent e) {
+		// TODO Auto-generated method stub
 
 	}
 
-
 	@Override
-	public void keyTyped(KeyEvent arg0) {
+	public void keyPressed(KeyEvent e) {
+		// TODO Auto-generated method stub
 
 	}
 	public static void main(String[] args)
 	{
 		MyFarme window = new MyFarme();
 		window.setVisible(true);
-
-
-		window.setSize(900,700);
+		
+		
+		window.setSize(900,500);
 		window.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-
+		
 	}
+
+
 
 }
